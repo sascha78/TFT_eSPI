@@ -101,7 +101,7 @@ inline void TFT_eSPI::spi_end_read(void){
 #endif
 }
 
-#if defined (TOUCH_CS) && defined (SPI_TOUCH_FREQUENCY) // && !defined(ESP32_PARALLEL)
+#if defined (TS_XPT2046_DRIVER) && defined (SPI_TOUCH_FREQUENCY) // && !defined(ESP32_PARALLEL)
 
   inline void TFT_eSPI::spi_begin_touch(void){
    CS_H; // Just in case it has been left low
@@ -151,7 +151,7 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
 #endif
 
 // Configure chip select for touchscreen controller if present
-#ifdef TOUCH_CS
+#ifdef TS_XPT2046_DRIVER
   digitalWrite(TOUCH_CS, HIGH); // Chip select high (inactive)
   pinMode(TOUCH_CS, OUTPUT);
 #endif
@@ -384,7 +384,8 @@ void TFT_eSPI::init(uint8_t tc)
   // This loads the driver specific initialisation code  <<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVERS TO THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<
 #if   defined (ILI9341_DRIVER)
     #include "TFT_Drivers/ILI9341_Init.h"
-
+#elif defined (ILI9342_DRIVER)
+    #include "TFT_Drivers/ILI9342_Init.h"
 #elif defined (ST7735_DRIVER)
     tabcolor = tc;
     #include "TFT_Drivers/ST7735_Init.h"
@@ -461,7 +462,8 @@ void TFT_eSPI::setRotation(uint8_t m)
     // This loads the driver specific rotation code  <<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVERS TO THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<
 #if   defined (ILI9341_DRIVER)
     #include "TFT_Drivers/ILI9341_Rotation.h"
-
+#elif defined (ILI9342_DRIVER)
+    #include "TFT_Drivers/ILI9342_Rotation.h"
 #elif defined (ST7735_DRIVER)
     #include "TFT_Drivers/ST7735_Rotation.h"
 
@@ -5380,7 +5382,7 @@ void TFT_eSPI::getSetup(setup_t &tft_settings)
   tft_settings.pin_tft_d7 = -1;
 #endif
 
-#if defined (TOUCH_CS)
+#if defined (TS_XPT2046_DRIVER)
   tft_settings.pin_tch_cs   = TOUCH_CS;
   tft_settings.tch_spi_freq = SPI_TOUCH_FREQUENCY/100000;
 #else
@@ -5390,8 +5392,11 @@ void TFT_eSPI::getSetup(setup_t &tft_settings)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-#ifdef TOUCH_CS
-  #include "Extensions/Touch.cpp"
+#if defined TS_XPT2046_DRIVER
+  #include "Extensions/Touch/Touch_xpt2046.cpp"
+  #include "Extensions/Button.cpp"
+#elif define TS_FT6236_DRIVER
+  #include "Extensions/Touch/Touch_ft6236.cpp"
   #include "Extensions/Button.cpp"
 #endif
 

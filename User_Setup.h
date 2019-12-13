@@ -30,6 +30,10 @@
 //#define R61581_DRIVER
 //#define RM68140_DRIVER
 
+// define the optional Touch screen driver to be used
+// #define TS_FT6236_DRIVER
+// #define TS_XPT2046_DRIVER
+
 // Some displays support SPI reads via the MISO pin, other displays have a single
 // bi-directional SDA pin and the library will try to read this via the MOSI line.
 // To use the SDA line for reading data from the TFT uncomment the following line:

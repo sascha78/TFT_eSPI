@@ -100,6 +100,9 @@
 
 #include <Arduino.h>
 #include <Print.h>
+#ifdef TS_FT6236_DRIVER
+  #include <Wire.h>
+#endif
 
 #include <pgmspace.h>
 
@@ -245,7 +248,7 @@
 #endif
 
 // chip select signal for touchscreen
-#ifndef TOUCH_CS
+#if !defined TS_XPT2046_DRIVER
   #define T_CS_L // No macro allocated so it generates no code
   #define T_CS_H // No macro allocated so it generates no code
 #else
@@ -532,7 +535,7 @@
 template <typename T> static inline void
 swap_coord(T& a, T& b) { T t = a; a = b; b = t; }
 
-#ifndef min
+#if !defined min
   // Return minimum of two numbers, may already be defined
   #define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif
@@ -905,8 +908,10 @@ class TFT_eSPI : public Print {
 #endif
 
 // Load the Touch extension
-#ifdef TOUCH_CS
-  #include "Extensions/Touch.h"
+#if defined TS_XPT2046_DRIVER
+  #include "Extensions/Touch/Touch_xpt2046.h"
+#elif defined TS_FT6236_DRIVER
+  #include "Extensions/Touch/Touch_ft6236.h"
 #endif
 
 // Load the Anti-aliased font extension
